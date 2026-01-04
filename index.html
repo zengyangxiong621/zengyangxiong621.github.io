@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新人培训，团队档案</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #e8eef3 0%, #f5f7fa 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 50px;
+            position: relative;
+            text-align: center;
+        }
+
+        .logo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img {
+            height: 28px;
+            width: auto;
+        }
+
+        .new-crew {
+            font-size: 14px;
+            color: #fff;
+            font-weight: 500;
+            background-color: #ff6b2b;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .header-content {
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 20px;
+            color: #7f8c8d;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .team-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            border: 3px solid transparent;
+        }
+
+        .team-card:hover {
+            transform: translateY(-20px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            border-color: #ff6b2b;
+        }
+
+        .team-card:hover::before {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #ff6b2b;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ff6b2b 0%, #ff8c5a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .name {
+            font-size: 26px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .title {
+            font-size: 16px;
+            color: #95a5a6;
+            font-weight: 500;
+        }
+
+        /* Modal 样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            width: 600px;
+            height: 650px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            animation: slideUp 0.4s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #ff6b2b 0%, #ff8c5a 100%);
+            padding: 40px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            color: white;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: rotate(90deg);
+        }
+
+        .modal-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto;
+            overflow: hidden;
+            border: 5px solid white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            background: white;
+        }
+
+        .modal-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            background: linear-gradient(135deg, #ff6b2b 0%, #ff8c5a 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .modal-name {
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .modal-body {
+            padding: 40px;
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+
+        .modal-section {
+            margin-bottom: 30px;
+        }
+
+        .modal-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .modal-section-content {
+            font-size: 16px;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag {
+            background: linear-gradient(135deg, #ff6b2b 0%, #ff8c5a 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: 300;
+            line-height: 0;
+            color: #ff6b2b;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .modal-nav:hover {
+            background: #ff6b2b;
+            color: white;
+            box-shadow: 0 6px 20px rgba(255, 107, 43, 0.4);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .modal-nav:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .modal-nav-left {
+            left: -110px;
+        }
+
+        .modal-nav-right {
+            right: -110px;
+        }
+
+        .modal-nav.hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .logo img {
+                height: 24px;
+            }
+
+            .header h1 {
+                font-size: 36px;
+            }
+
+            .header p {
+                font-size: 18px;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .modal {
+                width: 95%;
+                height: 550px;
+            }
+
+            .modal-body {
+                padding: 30px 20px;
+            }
+
+            .modal-nav {
+                width: 50px;
+                height: 50px;
+                font-size: 32px;
+                line-height: 0;
+            }
+
+            .modal-nav-left {
+                left: 5px;
+            }
+
+            .modal-nav-right {
+                right: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="https://websites.am-static.com/assets/brands/logo/aftership.svg" alt="AfterShip Logo">
+                <div class="new-crew">NEW CREW 2025</div>
+            </div>
+            <div class="header-content">
+                <h1>新人培训，团队档案</h1>
+                <p>遇见你的未来队友</p>
+            </div>
+        </div>
+
+        <div class="team-grid" id="teamGrid"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-container">
+            <button class="modal-nav modal-nav-left" id="modalNavPrev">‹</button>
+            <div class="modal" id="modal">
+                <div class="modal-header">
+                    <button class="modal-close" id="modalClose">×</button>
+                    <div class="modal-avatar" id="modalAvatar"></div>
+                    <div class="modal-name" id="modalName"></div>
+                    <div class="modal-title" id="modalTitle"></div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-section">
+                        <div class="modal-section-title">标签 Tags</div>
+                        <div class="tags" id="modalTags"></div>
+                    </div>
+                    <div class="modal-section">
+                        <div class="modal-section-title">所属团队，岗位 / Team, Position</div>
+                        <div class="modal-section-content" id="modalTeam"></div>
+                    </div>
+                    <div class="modal-section">
+                        <div class="modal-section-title">一句话介绍自己 / One Sentence Introduction</div>
+                        <div class="modal-section-content" id="modalInterests"></div>
+                    </div>
+                </div>
+            </div>
+            <button class="modal-nav modal-nav-right" id="modalNavNext">›</button>
+        </div>
+    </div>
+
+    <script>
+        // 当前显示的成员索引
+        let currentMemberIndex = 0;
+
+        // 团队成员数据
+        const teamMembers = [
+        {
+                id: 1,
+                name: '马子涛 Maki',
+                nameZh: '马子涛',
+                nameEn: 'Maki',
+                title: 'ENG - Data',
+                initials: 'M',
+                avatar: 'maki.png',
+                tags: ['Music', 'Football'],
+                team: 'ENG - Data',
+                interests: 'Ever-evolving',
+            },
+            {
+                id: 2,
+                name: '顾玥彤 Hannah',
+                nameZh: '顾玥彤',
+                nameEn: 'Hannah',
+                title: 'ENG - Security',
+                initials: 'H',
+                avatar: 'Hannah.png',
+                tags: ['Consultant', 'Compliance', 'Photography', 'Blue enthusiast'],
+                team: 'ENG - Security',
+                interests: 'Explore, Experience, Evolve Together.',
+            },
+            {
+                id: 3,
+                name: '肖文黎 Vincent',
+                nameZh: '肖文黎',
+                nameEn: 'Vincent',
+                title: 'ENG - Data',
+                initials: 'V',
+                avatar: 'Vincent.png',
+                tags: ['Football', 'Coffee', 'History'],
+                team: 'ENG - Data',
+                interests: 'Vital, Curious, Driven.',
+            },
+            {
+                id: 4,
+                name: '孙百圻 Betsy',
+                nameZh: '孙百圻',
+                nameEn: 'Betsy',
+                title: 'ENG - IT',
+                initials: 'B',
+                avatar: 'Betsy.png',
+                tags: ['Travel', 'Pet lover', 'Coffee-Fueled'],
+                team: 'ENG - IT',
+                interests: 'Finding order in everything.',
+            },
+            {
+                id: 5,
+                name: '黎梓毅 Zeke',
+                nameZh: '黎梓毅',
+                nameEn: 'Zeke',
+                title: 'ENG - BE',
+                initials: 'Z',
+                avatar: 'Zeke.png',
+                tags: ['Skiing', 'Music'],
+                team: 'ENG - BE',
+                interests: 'Look back to gain insight.',
+            },
+            {
+                id: 6,
+                name: '曾扬雄 Young',
+                nameZh: '曾扬雄',
+                nameEn: 'Young',
+                title: 'ENG - Data',
+                initials: 'Y',
+                avatar: 'Young.png',
+                tags: ['Electronic game', 'Photography'],
+                team: 'ENG - Data',
+                interests: 'Always young',
+            },
+
+        ];
+
+        // 渲染团队卡片
+        function renderTeamCards() {
+            const teamGrid = document.getElementById('teamGrid');
+            teamGrid.innerHTML = '';
+
+            teamMembers.forEach((member, index) => {
+                const card = document.createElement('div');
+                card.className = `team-card ${member.highlighted ? 'highlighted' : ''}`;
+                card.onclick = () => openModal(index);
+
+                const avatarContent = member.avatar 
+                    ? `<img src="${member.avatar}" alt="${member.name}">` 
+                    : member.initials;
+
+                card.innerHTML = `
+                    <div class="avatar">${avatarContent}</div>
+                    <div class="name">${member.name}</div>
+                    <div class="title">${member.title}</div>
+                `;
+
+                teamGrid.appendChild(card);
+            });
+        }
+
+        // 打开 Modal
+        function openModal(index) {
+            currentMemberIndex = index;
+            const member = teamMembers[index];
+            
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalAvatar = document.getElementById('modalAvatar');
+            const modalName = document.getElementById('modalName');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalTags = document.getElementById('modalTags');
+            const modalTeam = document.getElementById('modalTeam');
+            const modalInterests = document.getElementById('modalInterests');
+
+            // 设置头像
+            if (member.avatar) {
+                modalAvatar.innerHTML = `<img src="${member.avatar}" alt="${member.name}">`;
+            } else {
+                modalAvatar.innerHTML = `<div class="modal-avatar-placeholder">${member.initials}</div>`;
+            }
+
+            // 设置基本信息
+            modalName.textContent = member.name;
+            modalTitle.textContent = member.title;
+
+            // 设置标签
+            modalTags.innerHTML = '';
+            member.tags.forEach(tag => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'tag';
+                tagElement.textContent = tag;
+                modalTags.appendChild(tagElement);
+            });
+
+            // 设置团队
+            modalTeam.textContent = member.team;
+
+            // 设置兴趣爱好
+            modalInterests.textContent = member.interests;
+
+            // 显示 Modal
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭 Modal
+        function closeModal() {
+            const modalOverlay = document.getElementById('modalOverlay');
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 导航到上一个成员
+        function navigateToPrev() {
+            currentMemberIndex = (currentMemberIndex - 1 + teamMembers.length) % teamMembers.length;
+            openModal(currentMemberIndex);
+        }
+
+        // 导航到下一个成员
+        function navigateToNext() {
+            currentMemberIndex = (currentMemberIndex + 1) % teamMembers.length;
+            openModal(currentMemberIndex);
+        }
+
+        // 事件监听
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // 箭头按钮事件监听
+        document.getElementById('modalNavPrev').addEventListener('click', navigateToPrev);
+        document.getElementById('modalNavNext').addEventListener('click', navigateToNext);
+
+        // 键盘导航
+        document.addEventListener('keydown', function(e) {
+            const modalOverlay = document.getElementById('modalOverlay');
+            const isModalOpen = modalOverlay.classList.contains('active');
+            
+            if (!isModalOpen) return;
+            
+            if (e.key === 'Escape') {
+                closeModal();
+            } else if (e.key === 'ArrowLeft') {
+                navigateToPrev();
+            } else if (e.key === 'ArrowRight') {
+                navigateToNext();
+            }
+        });
+
+        // 初始化
+        renderTeamCards();
+    </script>
+</body>
+</html>
+
